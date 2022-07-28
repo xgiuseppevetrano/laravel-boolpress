@@ -8,6 +8,14 @@
             <p class="post__content">{{post.content}}</p>
             <div class="post__box">
                 <span class="post__category" v-if="post.category">Categoria: {{post.category.name}}</span>
+                <div class="post__tag" v-if="post.tags.length > 0">
+                    <span class="post__tag-name">Tags:</span>
+                    <ul>
+                        <li v-for="tag in post.tags" :key="tag.id">
+                            <router-link class="post__tag-link" :to="{ name: 'single-tag', params: {slug: tag.slug} }">{{tag.name}}</router-link>
+                        </li>
+                    </ul>
+                </div>
                 <button class="post__btn btn btn-outline-secondary mt-3"><router-link class="post__link" :to="{name: 'home'}">Home Page</router-link></button>
             </div>
         </div>
@@ -62,6 +70,15 @@
             display: block;
             font-size: .875rem;
             text-align: left;
+        }
+
+        &__tag {
+            font-size: .875rem;
+            text-align: left;
+
+            &-link {
+                color: #000;
+            }
         }
 
         &__btn {
