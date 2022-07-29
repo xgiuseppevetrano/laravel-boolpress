@@ -5,7 +5,11 @@
                 <h3 class="post__title">{{post.title}}</h3>
                 <h6 class="post__author">Autore: {{post.user.name}}</h6>
             </div>
-            <p class="post__content">{{post.content}}</p>
+            <div class="post__content">
+                <p>{{post.content}}</p>
+                <img v-if="post.image_path" :src="post.image_path" :alt="post.title">
+                <img v-if="post.image" :src="`/storage/${post.image}`" :alt="post.title">
+            </div>
             <div class="post__box">
                 <span class="post__category" v-if="post.category">Categoria: {{post.category.name}}</span>
                 <div class="post__tag" v-if="post.tags.length > 0">

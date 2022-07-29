@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 use App\Post;
 use App\Category;
@@ -52,17 +53,22 @@ class PostController extends Controller
             'content' => 'required|string|max:65535',
             'published' => 'sometimes|accepted',
             'category_id' => 'nullable|exists:categories,id',
-            'tags' => 'nullable|exists:tags,id'
+            'tags' => 'nullable|exists:tags,id',
+            'image' => 'nullable|image|max:500'
         ]);
 
         $data = $request->all();
         $newPost = new Post();
         $newPost->fill($data);
 
-        $newPost->slug = $this->getSlug($data['title']);
-        $newPost->published = isset($data['published']);
+        $newPost['slug'] = $this->getSlug($data['title']);
+        $newPost['published'] = isset($data['published']);
 
-        $newPost->user_id = Auth::id();
+        $newPost['user_id'] = Auth::id();
+
+        if(isset($data['image'])) {
+            $newPost['image'] = Storage::put('uploads', $data['image']);
+        }
 
         $newPost->save();
 
@@ -70,7 +76,7 @@ class PostController extends Controller
             $newPost->tags()->sync($data['tags']);
         }
 
-        return redirect()->route('admin.posts.show', $newPost->id);
+        return redirect()->route('admin.posts.show', $newPost['id']);
     }
 
     /**
@@ -128,17 +134,27 @@ class PostController extends Controller
             'content' => 'required|string|max:65535',
             'published' => 'sometimes|accepted',
             'category_id' => 'nullable|exists:categories,id',
-            'tags' => 'nullable|exists:tags,id'
+            'tags' => 'nullable|exists:tags,id',
+            'image' => 'nullable|image|max:500'
         ]);
 
         $data = $request->all();
 
-        if( $post->title != $data['title'] ) {
-            $post->slug = $this->getSlug($data['title']);
+        if( $post['title'] != $data['title'] ) {
+            $post['slug'] = $this->getSlug($data['title']);
         }
+
         $post->fill($data);
 
-        $post->published = isset($data['published']);
+        $post['published'] = isset($data['published']);
+
+        if(isset($data['image'])) {
+            if ($post['image']) {
+                Storage::delete($post['image']);
+            }
+
+            $post['image'] = Storage::put('uploads', $data['image']);
+        }
 
         $post->save();
         
@@ -146,7 +162,7 @@ class PostController extends Controller
         
         $post->tags()->sync($tags);
 
-        return redirect()->route('admin.posts.show', $post->id);
+        return redirect()->route('admin.posts.show', $post['id']);
     }
 
     /**
@@ -159,6 +175,10 @@ class PostController extends Controller
     {
         if ($post['user_id'] !== Auth::id()) {
             abort(403);
+        }
+        
+        if ($post['image']) {
+            Storage::delete($post['image']);
         }
 
         $post->delete();

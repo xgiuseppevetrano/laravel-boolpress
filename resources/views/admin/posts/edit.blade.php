@@ -25,6 +25,18 @@
                         @enderror
                     </div>
                     <div class="form-group">
+                        <label for="image">Immagine</label>
+                        @if($post['image'])
+                            <div>
+                                <img width="100" height="100" src="{{asset("storage/{$post['image']}")}}">
+                            </div>
+                        @endif
+                        <input type="file" class="form-control-file @error('image') is-invalid @enderror" id="image" name="image" value="{{old('image')}}">
+                        @error('image')
+                            <div class="alert alert-danger">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="form-group">
                         <label for="category">Categoria</label>
                         <select class="form-control @error('category_id') is-invalid @enderror" id="category" name="category_id">
                             <option value="">Seleziona Categoria</option>

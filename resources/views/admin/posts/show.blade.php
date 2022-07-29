@@ -16,6 +16,11 @@
                 <div>
                     {{$post['content']}}
                 </div>
+                @if($post['image'])
+                    <div class="mb-3">
+                        <img width="100" height="100" src="{{asset("storage/{$post['image']}")}}">
+                    </div>
+                @endif
                 @if(count($post['tags']) > 0)
                     <div class="mt-3">
                         <h6>Tags</h6>
