@@ -2615,13 +2615,10 @@ var render = function render() {
     staticClass: "post__author"
   }, [_vm._v("Autore: " + _vm._s(_vm.post.user.name))])]), _vm._v(" "), _c("div", {
     staticClass: "post__content"
-  }, [_c("p", [_vm._v(_vm._s(_vm.post.content))]), _vm._v(" "), _vm.post.image_path ? _c("img", {
+  }, [_c("p", [_vm._v(_vm._s(_vm.post.content))]), _vm._v(" "), _vm.post.image ? _c("img", {
     attrs: {
-      src: _vm.post.image_path,
-      alt: _vm.post.title
-    }
-  }) : _vm._e(), _vm._v(" "), _vm.post.image ? _c("img", {
-    attrs: {
+      width: "100",
+      height: "100",
       src: "/storage/".concat(_vm.post.image),
       alt: _vm.post.title
     }

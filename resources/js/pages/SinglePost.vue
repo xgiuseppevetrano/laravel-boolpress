@@ -7,8 +7,7 @@
             </div>
             <div class="post__content">
                 <p>{{post.content}}</p>
-                <img v-if="post.image_path" :src="post.image_path" :alt="post.title">
-                <img v-if="post.image" :src="`/storage/${post.image}`" :alt="post.title">
+                <img width="100" height="100" v-if="post.image" :src="`/storage/${post.image}`" :alt="post.title">
             </div>
             <div class="post__box">
                 <span class="post__category" v-if="post.category">Categoria: {{post.category.name}}</span>
