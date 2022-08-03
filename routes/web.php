@@ -16,16 +16,20 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 Route::middleware('auth')
-    ->namespace('Admin')
-    ->name('admin.')
-    ->prefix('admin')
-    ->group(function() {
-        Route::get('/home', 'HomeController@index')->name('home');
-        Route::resource('posts', 'PostController');
-        Route::resource('categories', 'CategoryController');
-        Route::resource('tags', 'TagController');
+   ->namespace('Admin')
+   ->name('admin.')
+   ->prefix('admin')
+   ->group(function () {
+    Route::get('/home', 'HomeController@index')->name('home');
+    Route::resource('posts', 'PostController');
+    Route::resource('categories', 'CategoryController');
+    Route::resource('tags', 'TagController');
+
+    Route::get('comments', 'CommentController@index')->name('comments.index');
+    Route::patch('comments/{comment}', 'CommentController@update')->name('comments.update');
+    Route::delete('comments/{comment}', 'CommentController@destroy')->name('comments.destroy');
 });
 
-Route::any('{any?}', function() {
+Route::get('{any?}', function() {
     return view('guest.home');
 })->where('any', '.*');

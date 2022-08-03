@@ -19,7 +19,38 @@
                         </li>
                     </ul>
                 </div>
-                <button class="post__btn btn btn-outline-secondary mt-3"><router-link class="post__link" :to="{name: 'home'}">Home Page</router-link></button>
+                <div class="mt-3" v-if="post.comments.length > 0">
+                    <h5>Commenti</h5>
+                    <div v-for="comment in post.comments" :key="comment.id">
+                        <span><strong>{{comment.name ? comment.name : 'Anonimo'}}:</strong> {{comment.content}}</span>
+                    </div>
+                </div>
+                <div class="mt-3 post__comments">
+                    <h6>Lascia un commento</h6>
+                    <form @submit.prevent="addComment()">
+                        <div class="mb-1">
+                            <input class="post__comments-input" type="text" name="name" placeholder="Inserisci il nome" v-model="formData.name">
+                            <ul v-if="errors.name" style="color:red">
+                                <li v-for="(err, index) in errors.name" :key="index">{{err}}</li>
+                            </ul>
+                        </div>
+                        <div class="mb-1">
+                            <textarea class="post__comments-textarea" name="content" id="content" cols="30" rows="2" placeholder="Inserisci il testo del commento" v-model="formData.content"></textarea>
+                            <ul v-if="errors.content" style="color:red">
+                                <li v-for="(err, index) in errors.content" :key="index">{{err}}</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <button class="post__btn btn btn-outline-secondary" type="submit">Aggiungi commento</button>
+                        </div>
+                        <div v-if="commentSent" class="mt-3" style="color: green; border: 1px solid green">
+                            Commento inserito in fase di approvazione
+                        </div>
+                    </form>
+                </div>                
+                <button class="post__btn btn btn-outline-secondary mt-3">
+                    <router-link class="post__link" :to="{name: 'home'}">Home Page</router-link>
+                </button>
             </div>
         </div>
     </div>
@@ -30,7 +61,13 @@
         name: 'SinglePost',
         data() {
             return {
-                post: null
+                post: null,
+                formData: {
+                    name: '',
+                    content: '',
+                },
+                commentSent: false,
+                errors: {}
             }
         },
         created() {
@@ -41,6 +78,19 @@
             .catch((e) => {
                 this.$router.push({name: 'page-404'});
             });
+        },
+        methods: {
+            addComment() {
+                axios.post(`/api/comments/${this.post.id}`, this.formData)
+                .then((resp) => {
+                    this.commentSent = true;
+                    this.formData.name = "";
+                    this.formData.content = "";
+                })
+                .catch((error) => {
+                    this.errors = error.response.data.errors;
+                });
+            }
         }
     }
 </script>
@@ -59,25 +109,20 @@
         padding: .625rem;
         display: flex;
         flex-direction: column;
-        height: 21.875rem;
+        height: 34.375rem;
+        width: 21.875rem;
 
         &__content {
             flex-grow: 1;
         }
 
-        &__box {
-            text-align: center;
-        }
-
         &__category {
             display: block;
             font-size: .875rem;
-            text-align: left;
         }
 
         &__tag {
             font-size: .875rem;
-            text-align: left;
 
             &-link {
                 color: #000;
@@ -92,6 +137,13 @@
         &__link {
             color: #000;
             text-decoration: none;
+        }
+
+        &__comments {
+            &-input,
+            &-textarea {
+                font-size: .875rem;
+            }
         }
     }
 

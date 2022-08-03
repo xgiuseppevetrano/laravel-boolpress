@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
 Route::get('posts', 'Api\PostController@index');
 Route::get('posts/{slug}', 'Api\PostController@show');
 
@@ -20,3 +21,5 @@ Route::get('categories', 'Api\CategoryController@index');
 Route::get('categories/{slug}', 'Api\CategoryController@show');
 
 Route::get('tags/{slug}', 'Api\TagController@show');
+
+Route::post('comments/{post_id}', 'Api\CommentController@store');
